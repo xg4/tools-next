@@ -1,24 +1,62 @@
 {
-  "name": "tool-next",
+  "name": "tools-next",
   "version": "0.1.0",
-  "private": true,
+  "description": "Browser Tools Collection",
+  "keywords": [
+    "tool",
+    "browser",
+    "collection"
+  ],
+  "homepage": "https://github.com/xg4/tools-next#readme",
+  "bugs": {
+    "url": "https://github.com/xg4/tools-next/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xg4/tools-next.git"
+  },
+  "license": "MIT",
+  "author": "xg4 <xingor4@gmail.com>",
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "next dev",
+    "lint": "next lint",
+    "prepare": "husky install",
+    "start": "next start"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx,json}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
+    "@heroicons/react": "2.0.17",
+    "classnames": "2.3.2",
+    "dayjs": "1.11.7",
+    "immer": "9.0.21",
+    "lodash": "4.17.21",
+    "next": "13.3.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-use": "17.4.0",
+    "uuid": "9.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/line-clamp": "0.4.4",
+    "@types/lodash": "4.14.194",
     "@types/node": "18.15.11",
     "@types/react": "18.0.35",
     "@types/react-dom": "18.0.11",
+    "@types/uuid": "9.0.1",
+    "@xg4/prettier-config": "1.1.0",
     "autoprefixer": "10.4.14",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
-    "next": "13.3.0",
+    "husky": "8.0.3",
+    "lint-staged": "13.2.1",
     "postcss": "8.4.21",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "prettier": "2.8.7",
+    "prettier-plugin-tailwindcss": "0.2.7",
     "tailwindcss": "3.3.1",
     "typescript": "5.0.4"
   }
