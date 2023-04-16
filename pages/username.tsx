@@ -17,6 +17,7 @@ function Item({ username, className, onClick }: { username: string; className?: 
 }
 
 export default function Uuid() {
+  const [length, setLength] = useState(4)
   const [now, setNow] = useState(dayjs().unix())
   const update = useCallback(() => {
     setNow(dayjs().unix())
@@ -24,7 +25,8 @@ export default function Uuid() {
 
   const [list, setList] = useState<string[]>([])
 
-  const displayList = useMemo(() => range(50).map(() => v4().replaceAll('-', '').slice(0, 4)), [now])
+  const v4List = useMemo(() => range(50).map(() => v4()), [now])
+  const displayList = v4List.map(i => i.replaceAll('-', '').slice(0, length))
 
   const [, copyToClipboard] = useCopyToClipboard()
 
@@ -34,10 +36,28 @@ export default function Uuid() {
         <title>用户名随机生成</title>
       </Head>
       <div className="flex flex-col items-center justify-center p-10 font-mono">
+        <div className="w-full pt-10">
+          <span className="text-left text-lg font-bold">字符串长度：</span>
+          <select
+            value={length}
+            onChange={evt => {
+              setLength(parseInt(evt.target.value))
+            }}
+          >
+            {v4()
+              .replaceAll('-', '')
+              .split('')
+              .map((_, index) => (
+                <option value={index + 1} key={index}>
+                  {index + 1}
+                </option>
+              ))}
+          </select>
+        </div>
         <div className="w-full pt-10 text-left text-lg font-bold">随机列表：</div>
         <ClientOnly>
-          <div className="grid grid-cols-10 gap-4 p-6">
-            {displayList.map(username => {
+          <div className="flex flex-wrap gap-4 p-6">
+            {displayList.map((username, index) => {
               return (
                 <Item
                   className={classNames({
@@ -52,7 +72,7 @@ export default function Uuid() {
                       }),
                     )
                   }}
-                  key={username}
+                  key={index}
                   username={username}
                 />
               )
@@ -65,9 +85,8 @@ export default function Uuid() {
         >
           更新
         </button>
-
         <div className="w-full pt-10 text-left text-lg font-bold">已选择：</div>
-        <div className="grid grid-cols-10 gap-4 p-6">
+        <div className="flex flex-wrap gap-4 p-6">
           {list.map(username => {
             return <Item key={username} username={username} onClick={() => copyToClipboard(username)} />
           })}
