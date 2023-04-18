@@ -14,6 +14,10 @@ export default function Home() {
       title: '解析请求头信息',
       link: '/header',
     },
+    {
+      title: '解析 URL 参数',
+      link: '/url',
+    },
   ]
   return (
     <div className="p-10">
