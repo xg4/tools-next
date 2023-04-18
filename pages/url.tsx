@@ -1,5 +1,5 @@
 import { ClipboardIcon } from '@heroicons/react/24/outline'
-import produce from 'immer'
+import { produce } from 'immer'
 import { isEmpty } from 'lodash'
 import Head from 'next/head'
 import { useState } from 'react'
