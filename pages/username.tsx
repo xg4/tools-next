@@ -1,23 +1,34 @@
+import Button from '@/components/Button'
 import ClientOnly from '@/components/ClientOnly'
+import { generateUsername, globalUsername } from '@/utils/user'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
-import produce from 'immer'
-import { range } from 'lodash'
+import { produce } from 'immer'
+import { parseInt, range, times, toNumber, uniq } from 'lodash'
 import Head from 'next/head'
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import { useCopyToClipboard } from 'react-use'
-import { v4 } from 'uuid'
 
-function Item({ username, className, onClick }: { username: string; className?: string; onClick?: () => void }) {
-  return (
-    <button onClick={onClick} className={classNames('border border-blue-500 p-4 shadow-lg', className)}>
-      {username}
-    </button>
+export default function Username() {
+  const searchParams = useSearchParams()
+  const length = Math.min(toNumber(searchParams.get('length')) || 4, globalUsername.length - 1)
+  const num = toNumber(searchParams.get('num')) || 50
+
+  const router = useRouter()
+  const setLength = useCallback(
+    (len: number) => {
+      router.replace({
+        query: {
+          ...router.query,
+          length: len,
+        },
+      })
+    },
+    [router],
   )
-}
 
-export default function Uuid() {
-  const [length, setLength] = useState(4)
   const [now, setNow] = useState(dayjs().unix())
   const update = useCallback(() => {
     setNow(dayjs().unix())
@@ -25,10 +36,9 @@ export default function Uuid() {
 
   const [list, setList] = useState<string[]>([])
 
-  const v4List = useMemo(() => range(50).map(() => v4()), [now])
-  const displayList = v4List.map(i => i.replaceAll('-', '').slice(0, length))
+  const v4List = useMemo(() => uniq(times(num, () => generateUsername(length))), [length, num, now])
 
-  const [, copyToClipboard] = useCopyToClipboard()
+  const [, copy] = useCopyToClipboard()
 
   return (
     <>
@@ -44,26 +54,24 @@ export default function Uuid() {
               setLength(parseInt(evt.target.value))
             }}
           >
-            {v4()
-              .replaceAll('-', '')
-              .split('')
-              .map((_, index) => (
-                <option value={index + 1} key={index}>
-                  {index + 1}
-                </option>
-              ))}
+            {range(1, globalUsername.length).map(num => (
+              <option value={num} key={num}>
+                {num}
+              </option>
+            ))}
           </select>
         </div>
         <div className="w-full pt-10 text-left text-lg font-bold">随机列表：</div>
         <ClientOnly>
           <div className="flex flex-wrap gap-4 p-6">
-            {displayList.map((username, index) => {
+            {v4List.map(username => {
               return (
-                <Item
+                <Button
                   className={classNames({
                     'bg-blue-500 text-white': list.includes(username),
                   })}
                   onClick={() => {
+                    copy(username)
                     setList(
                       produce(draft => {
                         if (!draft.includes(username)) {
@@ -72,9 +80,10 @@ export default function Uuid() {
                       }),
                     )
                   }}
-                  key={index}
-                  username={username}
-                />
+                  key={username}
+                >
+                  {username}
+                </Button>
               )
             })}
           </div>
@@ -85,12 +94,18 @@ export default function Uuid() {
         >
           更新
         </button>
-        <div className="w-full pt-10 text-left text-lg font-bold">已选择：</div>
-        <div className="flex flex-wrap gap-4 p-6">
-          {list.map(username => {
-            return <Item key={username} username={username} onClick={() => copyToClipboard(username)} />
-          })}
-        </div>
+        {list.length ? (
+          <>
+            <div className="w-full pt-10 text-left text-lg font-bold">已选择：</div>
+            <div className="flex flex-wrap gap-4 p-6">
+              {list.map(username => (
+                <Button key={username} onClick={() => copy(username)}>
+                  {username}
+                </Button>
+              ))}
+            </div>
+          </>
+        ) : null}
       </div>
     </>
   )

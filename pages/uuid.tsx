@@ -1,11 +1,27 @@
+import Button from '@/components/Button'
 import ClientOnly from '@/components/ClientOnly'
-import { range } from 'lodash'
+import dayjs from 'dayjs'
+import { times, toNumber } from 'lodash'
 import Head from 'next/head'
-import { useUpdate } from 'react-use'
+import { useSearchParams } from 'next/navigation'
+import { useCallback, useMemo, useState } from 'react'
+import { useCopyToClipboard } from 'react-use'
 import { v4 } from 'uuid'
 
 export default function Uuid() {
-  const update = useUpdate()
+  const searchParams = useSearchParams()
+  const num = toNumber(searchParams.get('num')) || 9
+
+  const [, copy] = useCopyToClipboard()
+
+  const [now, setNow] = useState(dayjs().unix())
+
+  const list = useMemo(() => times(num, () => v4()), [num, now])
+
+  const update = useCallback(() => {
+    setNow(dayjs().unix())
+  }, [])
+
   return (
     <>
       <Head>
@@ -13,13 +29,17 @@ export default function Uuid() {
       </Head>
       <div className="flex flex-col items-center justify-center p-10 font-mono">
         <ClientOnly>
-          <div className="space-y-4 p-6">
-            {range(4).map(() => {
-              const uuidV4 = v4()
+          <div className="flex flex-wrap gap-2 p-6">
+            {list.map(value => {
               return (
-                <div className="border border-blue-500 p-4" key={uuidV4}>
-                  {uuidV4}
-                </div>
+                <Button
+                  key={value}
+                  onClick={() => {
+                    copy(value)
+                  }}
+                >
+                  {value}
+                </Button>
               )
             })}
           </div>
