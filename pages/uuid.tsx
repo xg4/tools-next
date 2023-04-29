@@ -1,5 +1,5 @@
-import Button from '@/components/Button'
 import ClientOnly from '@/components/ClientOnly'
+import { Button } from 'antd'
 import dayjs from 'dayjs'
 import { times, toNumber } from 'lodash'
 import Head from 'next/head'
@@ -29,10 +29,11 @@ export default function Uuid() {
       </Head>
       <div className="flex flex-col items-center justify-center p-10 font-mono">
         <ClientOnly>
-          <div className="flex flex-wrap gap-2 p-6">
+          <div className="flex flex-wrap justify-center gap-4 p-6">
             {list.map(value => {
               return (
                 <Button
+                  className="font-mono text-base"
                   key={value}
                   onClick={() => {
                     copy(value)
@@ -44,12 +45,9 @@ export default function Uuid() {
             })}
           </div>
         </ClientOnly>
-        <button
-          className="flex items-center justify-center rounded-lg bg-blue-500 px-4 py-2 text-sm text-white"
-          onClick={update}
-        >
+        <Button type="primary" onClick={update}>
           更新
-        </button>
+        </Button>
       </div>
     </>
   )

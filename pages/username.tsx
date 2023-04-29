@@ -1,10 +1,9 @@
-import Button from '@/components/Button'
 import ClientOnly from '@/components/ClientOnly'
 import { generateUsername, globalUsername } from '@/utils/user'
-import classNames from 'classnames'
+import { Button, Select } from 'antd'
 import dayjs from 'dayjs'
 import { produce } from 'immer'
-import { parseInt, range, times, toNumber, uniq } from 'lodash'
+import { range, times, toNumber, uniq } from 'lodash'
 import Head from 'next/head'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/router'
@@ -48,18 +47,13 @@ export default function Username() {
       <div className="flex flex-col items-center justify-center p-10 font-mono">
         <div className="w-full pt-10">
           <span className="text-left text-lg font-bold">字符串长度：</span>
-          <select
-            value={length}
-            onChange={evt => {
-              setLength(parseInt(evt.target.value))
-            }}
-          >
+          <Select value={length} onChange={setLength}>
             {range(1, globalUsername.length).map(num => (
-              <option value={num} key={num}>
+              <Select.Option value={num} key={num}>
                 {num}
-              </option>
+              </Select.Option>
             ))}
-          </select>
+          </Select>
         </div>
         <div className="w-full pt-10 text-left text-lg font-bold">随机列表：</div>
         <ClientOnly>
@@ -67,9 +61,8 @@ export default function Username() {
             {v4List.map(username => {
               return (
                 <Button
-                  className={classNames({
-                    'bg-blue-500 text-white': list.includes(username),
-                  })}
+                  className="font-mono text-base"
+                  type={list.includes(username) ? 'primary' : 'default'}
                   onClick={() => {
                     copy(username)
                     setList(
@@ -88,18 +81,15 @@ export default function Username() {
             })}
           </div>
         </ClientOnly>
-        <button
-          className="flex items-center justify-center rounded-lg bg-blue-500 px-4 py-2 text-sm text-white"
-          onClick={update}
-        >
+        <Button type="primary" onClick={update}>
           更新
-        </button>
+        </Button>
         {list.length ? (
           <>
             <div className="w-full pt-10 text-left text-lg font-bold">已选择：</div>
             <div className="flex flex-wrap gap-4 p-6">
               {list.map(username => (
-                <Button key={username} onClick={() => copy(username)}>
+                <Button className="font-mono text-base" key={username} onClick={() => copy(username)}>
                   {username}
                 </Button>
               ))}
