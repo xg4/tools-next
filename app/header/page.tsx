@@ -1,5 +1,6 @@
+'use client'
+
 import { ClipboardDocumentIcon, ClipboardIcon } from '@heroicons/react/24/outline'
-import Head from 'next/head'
 import { useState } from 'react'
 import { useCopyToClipboard } from 'react-use'
 
@@ -46,17 +47,13 @@ function Item({ label, value }: { label: string; value: string }) {
   )
 }
 
-export default function Header() {
+export default function Page() {
   const [value, setValue] = useState('')
 
   const headers = parseHeaders(value)
 
   return (
     <>
-      <Head>
-        <title>解析 headers</title>
-      </Head>
-
       <div className="p-10">
         <textarea
           placeholder="请输入 request/response headers"

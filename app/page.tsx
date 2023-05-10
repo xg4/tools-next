@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function Home() {
+export default function Page() {
   const links = [
     {
       title: 'uuid v4',
@@ -26,7 +26,7 @@ export default function Home() {
   return (
     <div className="p-10">
       <h3 className="mb-2 text-lg font-bold">工具集：</h3>
-      <div className="mb-2 text-sm text-gray-500">所有工具均可离线使用，无接口请求，保护大家隐私</div>
+      <div className="mb-2 text-sm text-gray-500">所有工具均可离线使用，无接口请求，保护隐私</div>
       <ul className="space-y-2 pl-6">
         {links.map(item => (
           <li key={item.link} className="text-blue-500 underline">

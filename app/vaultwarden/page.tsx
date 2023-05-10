@@ -1,10 +1,11 @@
+'use client'
+
 import { readFileAsText } from '@/utils/file'
 import { Table, Tag, Upload, UploadProps } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 import { compact, keyBy, uniqBy } from 'lodash'
-import Head from 'next/head'
 import { useState } from 'react'
 
 interface Line {
@@ -26,7 +27,7 @@ function formatText(text: string): Line[] {
 
 type DataType = Line
 
-export default function Vaultwarden() {
+export default function Page() {
   const [lines, setLines] = useState<Line[]>([])
   const levels = keyBy(lines, 'level')
   const scopes = keyBy(lines, 'scope')
@@ -96,17 +97,12 @@ export default function Vaultwarden() {
   }
 
   return (
-    <>
-      <Head>
-        <title>解析 Vaultwarden 日志内容</title>
-      </Head>
-      <div className="container mx-auto p-4">
-        <Upload.Dragger {...props}>
-          <p className="text-gray-900">点击或拖动文件到此区域进行上传</p>
-          <p className="text-gray-500">支持单一或批量上传</p>
-        </Upload.Dragger>
-        <Table className="py-10" columns={columns} dataSource={lines} />;
-      </div>
-    </>
+    <div className="container mx-auto p-4">
+      <Upload.Dragger {...props}>
+        <p className="text-gray-900">点击或拖动文件到此区域进行上传</p>
+        <p className="text-gray-500">支持单一或批量上传</p>
+      </Upload.Dragger>
+      <Table className="py-10" columns={columns} dataSource={lines} />
+    </div>
   )
 }
