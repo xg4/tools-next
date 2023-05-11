@@ -1,40 +1,30 @@
 'use client'
 
 import CopyButton from '@/components/CopyButton'
-import { Button } from 'antd'
-import dayjs from 'dayjs'
-import { times, toNumber } from 'lodash'
+import useUniqList from '@/hooks/useUniqList'
+import { SyncOutlined } from '@ant-design/icons'
+import { FloatButton, Skeleton } from 'antd'
+import { isNumber, toNumber } from 'lodash'
 import { useSearchParams } from 'next/navigation'
-import { useCallback, useMemo, useState } from 'react'
-import { v4 } from 'uuid'
-
-function generateUuidList(num: number) {
-  return times(num, () => v4())
-}
 
 export default function Client() {
   const searchParams = useSearchParams()
 
-  const num = toNumber(searchParams.get('num')) || 9
+  const num = toNumber(searchParams.get('num')) || 6
 
-  const [now, setNow] = useState(dayjs().unix())
-
-  const list: string[] = useMemo(() => generateUuidList(num), [num, now])
-
-  const update = useCallback(() => {
-    setNow(dayjs().unix())
-  }, [])
+  const { data, reset } = useUniqList({ count: num })
 
   return (
-    <div className="flex flex-col items-center justify-center p-10 font-mono">
-      <div className="flex flex-wrap justify-center gap-4 p-6">
-        {list.map(value => (
-          <CopyButton key={value} value={value} />
+    <div className="container mx-auto flex min-h-screen flex-col items-center justify-center space-y-6">
+      <div className="text-xl font-bold text-gray-700">UUID V4</div>
+      <div className="flex flex-wrap justify-center gap-4">
+        {data.map(value => (
+          <div key={value} className="w-96">
+            {isNumber(value) ? <Skeleton.Input block active /> : <CopyButton value={value} />}
+          </div>
         ))}
       </div>
-      <Button type="primary" onClick={update}>
-        更新
-      </Button>
+      <FloatButton type="primary" icon={<SyncOutlined />} onClick={reset} />
     </div>
   )
 }

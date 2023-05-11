@@ -1,11 +1,7 @@
 import dynamic from 'next/dynamic'
-import { ReactNode } from 'react'
+import { PropsWithChildren } from 'react'
 
-interface Props {
-  children: ReactNode
-}
-
-const ClientOnly = dynamic(() => Promise.resolve((props: Props) => <>{props.children}</>), {
+const ClientOnly = dynamic(() => Promise.resolve((props: PropsWithChildren) => <>{props.children}</>), {
   ssr: false,
 })
 

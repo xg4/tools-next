@@ -27,13 +27,13 @@ export default function Page() {
     <div className="p-10">
       <h3 className="mb-2 text-lg font-bold">工具集：</h3>
       <div className="mb-2 text-sm text-gray-500">所有工具均可离线使用，无接口请求，保护隐私</div>
-      <ul className="space-y-2 pl-6">
+      <div className="flex flex-col space-y-4">
         {links.map(item => (
-          <li key={item.link} className="text-blue-500 underline">
-            <Link href={item.link}>{item.title}</Link>
-          </li>
+          <Link key={item.link} className="text-blue-500 underline" href={item.link}>
+            {item.title}
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }

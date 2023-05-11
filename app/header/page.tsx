@@ -1,6 +1,6 @@
 'use client'
 
-import { ClipboardDocumentIcon, ClipboardIcon } from '@heroicons/react/24/outline'
+import { Button, Input } from 'antd'
 import { useState } from 'react'
 import { useCopyToClipboard } from 'react-use'
 
@@ -23,24 +23,21 @@ function Item({ label, value }: { label: string; value: string }) {
 
       {!!value && (
         <div className="flex justify-end space-x-4 pt-10">
-          <button
+          <Button
             onClick={() => {
               copyToClipboard(value)
             }}
-            className="flex items-center justify-center rounded-lg bg-blue-500 px-4 py-2 text-sm text-white"
           >
             复制原文
-            <ClipboardIcon className="h-4 w-4" />
-          </button>
-          <button
+          </Button>
+          <Button
+            type="primary"
             onClick={() => {
               copyToClipboard(JSON.stringify(value))
             }}
-            className="flex items-center justify-center rounded-lg bg-indigo-500 px-4 py-2 text-sm text-white"
           >
             复制字符串
-            <ClipboardDocumentIcon className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       )}
     </div>
@@ -55,14 +52,16 @@ export default function Page() {
   return (
     <>
       <div className="p-10">
-        <textarea
+        <Input.TextArea
           placeholder="请输入 request/response headers"
-          className="mb-10 h-96 w-full resize-none border border-blue-500 p-2"
+          className="mb-10"
+          allowClear
+          autoSize
           value={value}
           onChange={evt => {
             setValue(evt.target.value)
           }}
-        ></textarea>
+        />
       </div>
 
       <div className="space-y-6 break-all p-10">

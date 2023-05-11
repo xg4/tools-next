@@ -2,17 +2,23 @@
 
 import CopyButton from '@/components/CopyButton'
 import useCurrentURL from '@/hooks/useCurrentURL'
-import { generateUsername, globalUsername } from '@/utils/user'
-import { Button, Select } from 'antd'
-import dayjs from 'dayjs'
-import { range, times, toNumber, uniq } from 'lodash'
+import useUniqList from '@/hooks/useUniqList'
+import { SyncOutlined } from '@ant-design/icons'
+import { FloatButton, Select, Skeleton } from 'antd'
+import { isNumber, range, toNumber } from 'lodash'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback } from 'react'
+import { v4 } from 'uuid'
+
+const GLOBAL_USERNAME = v4().replaceAll('-', '')
 
 export default function Client() {
   const searchParams = useSearchParams()
-  const length = Math.min(toNumber(searchParams.get('length')) || 4, globalUsername.length - 1)
-  const num = toNumber(searchParams.get('num')) || 50
+  const length = Math.min(toNumber(searchParams.get('length')) || 4, GLOBAL_USERNAME.length - 1)
+  const num = toNumber(searchParams.get('num')) || 40
+
+  const generate = useCallback(() => v4().replaceAll('-', '').slice(0, length), [length])
+  const { data, reset } = useUniqList({ count: num, generate })
 
   const { setSearchParams } = useCurrentURL()
   const router = useRouter()
@@ -22,35 +28,32 @@ export default function Client() {
     },
     [router, setSearchParams],
   )
-
-  const [now, setNow] = useState(dayjs().unix())
-  const update = useCallback(() => {
-    setNow(dayjs().unix())
-  }, [])
-
-  const v4List = useMemo(() => uniq(times(num, () => generateUsername(length))), [length, num, now])
-
   return (
-    <div className="flex flex-col items-center justify-center p-10 font-mono">
-      <div className="w-full pt-10">
-        <span className="text-left text-lg font-bold">字符串长度：</span>
+    <>
+      <div className="fixed left-0 top-0 z-10 flex w-full items-center bg-white/90 p-6 shadow-xl">
+        <div className="text-left text-lg font-bold">用户名长度：</div>
         <Select value={length} onChange={setLength}>
-          {range(1, globalUsername.length).map(num => (
+          {range(1, GLOBAL_USERNAME.length).map(num => (
             <Select.Option value={num} key={num}>
               {num}
             </Select.Option>
           ))}
         </Select>
       </div>
-      <div className="w-full pt-10 text-left text-lg font-bold">随机列表：</div>
-      <div className="flex flex-wrap gap-4 p-6">
-        {v4List.map(username => (
-          <CopyButton key={username} value={username} />
-        ))}
+      <div className="container mx-auto flex min-h-screen flex-col items-center justify-center space-y-6 pt-28">
+        <div className="text-xl font-bold text-gray-700">
+          用户名 <span className="text-base font-normal text-gray-400">({length}位)</span>
+        </div>
+        <div className="flex flex-wrap justify-center gap-4">
+          {data.map((text, index) => {
+            if (isNumber(text)) {
+              return <Skeleton.Button active key={text} />
+            }
+            return <CopyButton key={[text, index].join('|')} value={text} />
+          })}
+        </div>
+        <FloatButton type="primary" icon={<SyncOutlined />} onClick={reset} />
       </div>
-      <Button type="primary" onClick={update}>
-        更新
-      </Button>
-    </div>
+    </>
   )
 }

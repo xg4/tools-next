@@ -1,15 +1,12 @@
 'use client'
 
-import { ClipboardIcon } from '@heroicons/react/24/outline'
+import { Typography } from 'antd'
 import { produce } from 'immer'
 import { isEmpty } from 'lodash'
 import { useState } from 'react'
-import { useCopyToClipboard } from 'react-use'
 
 export default function Page() {
   const [params, setParams] = useState<Record<string, string>>({})
-
-  const [, copy] = useCopyToClipboard()
 
   return (
     <>
@@ -51,18 +48,9 @@ export default function Page() {
           </div>
           <div className="break-all p-10">
             <div className="text-lg font-bold">结果:</div>
-            <div className="font-mono text-sm">
+            <Typography.Text code copyable className="font-mono text-sm">
               {new URLSearchParams(params).toString()}
-              <button
-                onClick={() => {
-                  copy(new URLSearchParams(params).toString())
-                }}
-                className="inline-flex items-center justify-center text-base font-medium text-blue-500"
-              >
-                复制
-                <ClipboardIcon className="h-4 w-4" />
-              </button>
-            </div>
+            </Typography.Text>
           </div>
         </>
       )}
