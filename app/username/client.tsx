@@ -2,10 +2,11 @@
 
 import CopyButton from '@/components/CopyButton'
 import useCurrentURL from '@/hooks/useCurrentURL'
+import useRafList from '@/hooks/useRafList'
 import useUniqList from '@/hooks/useUniqList'
 import { SyncOutlined } from '@ant-design/icons'
 import { FloatButton, Select, Skeleton } from 'antd'
-import { isNumber, range, toNumber } from 'lodash'
+import { isNull, range, toNumber } from 'lodash'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { v4 } from 'uuid'
@@ -18,8 +19,8 @@ export default function Client() {
   const num = toNumber(searchParams.get('num')) || 40
 
   const generate = useCallback(() => v4().replaceAll('-', '').slice(0, length), [length])
-  const { data, reset } = useUniqList({ count: num, generate })
-
+  const { data: _data, reset } = useUniqList({ count: num, generate })
+  const { data } = useRafList(_data)
   const { setSearchParams } = useCurrentURL()
   const router = useRouter()
   const setLength = useCallback(
@@ -45,9 +46,9 @@ export default function Client() {
           用户名 <span className="text-base font-normal text-gray-400">({length}位)</span>
         </div>
         <div className="flex flex-wrap justify-center gap-4">
-          {data.map((text, index) => {
-            if (isNumber(text)) {
-              return <Skeleton.Button active key={text} />
+          {data.map(({ value: text }, index) => {
+            if (isNull(text)) {
+              return <Skeleton.Button active key={index} />
             }
             return <CopyButton key={[text, index].join('|')} value={text} />
           })}
